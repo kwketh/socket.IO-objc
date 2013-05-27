@@ -84,6 +84,7 @@ NSString* const SocketIOException = @"SocketIOException";
 {
     self = [super init];
     if (self) {
+        _httpRequestData = [[NSMutableData data] retain];
         _delegate = delegate;
         _queue = [[NSMutableArray alloc] init];
         _ackCount = 0;
@@ -145,10 +146,7 @@ NSString* const SocketIOException = @"SocketIOException";
         [_handshake scheduleInRunLoop:[NSRunLoop mainRunLoop]
                               forMode:NSDefaultRunLoopMode];
         [_handshake start];
-        if (_handshake) {
-            _httpRequestData = [NSMutableData data];
-        }
-        else {
+        if (!_handshake) {
             // connection failed
             [self connection:_handshake didFailWithError:nil];
         }
@@ -605,7 +603,6 @@ NSString* const SocketIOException = @"SocketIOException";
             [self connection:connection didFailWithError:statusError];
         }
     }
-    
     [_httpRequestData setLength:0];
 }
 
@@ -762,10 +759,10 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 
 - (void) dealloc
 {
+    [_httpRequestData release];
     _host = nil;
     _sid = nil;
-    _endpoint = nil;
-    
+    _endpoint = nil;    
     _transport = nil;
     
     [_timeout invalidate];
@@ -773,6 +770,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
     
     _queue = nil;
     _acks = nil;
+    [super dealloc];
 }
 
 

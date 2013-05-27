@@ -32,7 +32,7 @@
 {
     self = [super init];
     if (self) {
-        _types = [NSArray arrayWithObjects: @"disconnect",
+        _types = [[NSArray arrayWithObjects: @"disconnect",
                   @"connect",
                   @"heartbeat",
                   @"message",
@@ -41,7 +41,7 @@
                   @"ack",
                   @"error",
                   @"noop",
-                  nil];
+                  nil] retain];
     }
     return self;
 }
@@ -89,8 +89,8 @@
 
 - (void) dealloc
 {
-    _types = nil;
-    
+    [_types release];
+    _types = nil;    
     type = nil;
     pId = nil;
     name = nil;
